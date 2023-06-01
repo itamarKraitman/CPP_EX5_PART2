@@ -109,7 +109,6 @@ namespace ariel
         class PrimeIterator
         {
         private:
-            vector<int> primeElements;
             MagicalContainer &container;
             size_t position;
 
@@ -120,6 +119,12 @@ namespace ariel
                 {
                     return false;
                 }
+
+                if (num == 2)
+                {
+                    return true;
+                }
+                
 
                 double sqrtNum = sqrt(num);
                 for (int i = 2; i <= sqrtNum; i++)

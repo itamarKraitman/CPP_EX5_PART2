@@ -77,7 +77,7 @@ namespace ariel
         {
             throw std::runtime_error("Iterator assignment between different containers");
         }
-        
+
         this->container = other.container;
         this->position = other.position;
         return *this;
@@ -214,9 +214,9 @@ namespace ariel
         return iter;
     }
 
-    MagicalContainer::PrimeIterator::PrimeIterator(MagicalContainer &container) : container(container), position(0) 
+    MagicalContainer::PrimeIterator::PrimeIterator(MagicalContainer &container) : container(container), position(0)
     {
-        this->container.elements = findPrimes(this->container.elements);
+        // this->container.elements = findPrimes(this->container.elements);
     }
 
     MagicalContainer::PrimeIterator::PrimeIterator(const PrimeIterator &other) : container(other.container), position(other.position) {}
@@ -228,26 +228,52 @@ namespace ariel
         if (this->container != other.container)
         {
             throw std::runtime_error("Iterator assignment between different containers");
-        } 
+        }
 
         this->container = other.container;
         this->position = other.position;
         return *this;
     }
 
+    // int MagicalContainer::PrimeIterator::operator*()
+    // {
+    //     return this->container.elements[position];
+    // }
+
+    // MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()
+    // {
+    //     if (this->position == this->end().position)
+    //     {
+    //         throw std::runtime_error("Iterator out of range");
+    //     }
+
+    //     ++this->position;
+    //     return *this;
+    // }
+
     int MagicalContainer::PrimeIterator::operator*()
     {
-        return this->container.elements[position];
-    }
+        while (!isPrime(this->container.elements[this->position]))
+        {
+            ++this->position;
+        }
 
-    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()
-    {
         if (this->position == this->end().position)
         {
             throw std::runtime_error("Iterator out of range");
         }
 
+        return this->container.elements[this->position];
+    }
+
+    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()
+    {
         ++this->position;
+        while (this->position != this->end().position && !isPrime(this->container.elements[this->position]))
+        {
+            ++this->position;
+        }
+
         return *this;
     }
 
