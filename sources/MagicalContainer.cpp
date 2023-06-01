@@ -3,37 +3,37 @@
 
 namespace ariel
 {
-    MagicalContainer::Iterator::Iterator() {}
+    MagicalContainer::MagicalContainer() {}
 
-    MagicalContainer::MagicalContainer()
-    {
-        elements = vector<int>();
-        ascendingIterator = AscendingIterator(*this);
-        sideCrossIterator = SideCrossIterator(*this);
-        primeIterator = PrimeIterator(*this);
-    }
-
-    MagicalContainer::~MagicalContainer()
-    {
-    }
+    MagicalContainer::~MagicalContainer() {}
 
     bool MagicalContainer::addElement(int newElement)
     {
+        for (auto currElement : elements)
+        {
+            if (newElement == currElement)
+            {
+                cout << "Element already exist" << endl;
+                return false;
+            }
+        }
+
         elements.push_back(newElement);
         return true;
     }
 
-    bool MagicalContainer::removeElement(int element)
+    void MagicalContainer::removeElement(int element)
     {
         for (auto currElement : elements)
         {
             if (currElement == element)
             {
                 elements.erase(std::find(elements.begin(), elements.end(), element));
-                return true;
+                return;
             }
         }
-        return false;
+
+        throw std::runtime_error("Element does not exist");
     }
 
     std::vector<int> MagicalContainer::getElements() const
@@ -41,220 +41,251 @@ namespace ariel
         return this->elements;
     }
 
-    int MagicalContainer::size() const
+    size_t MagicalContainer::size() const
     {
-        return elements.size();
+        return this->elements.size();
     }
 
-    MagicalContainer::AscendingIterator &MagicalContainer::getAscendingIterator()
+    bool MagicalContainer::operator==(MagicalContainer &other)
     {
-        return this->ascendingIterator;
+        return (this->elements == other.elements);
     }
 
-    MagicalContainer::SideCrossIterator &MagicalContainer::getSideCrossIterator()
+    bool MagicalContainer::operator!=(MagicalContainer &other)
     {
-        return this->sideCrossIterator;
+        return (this->elements != other.elements);
     }
 
-    MagicalContainer::PrimeIterator &MagicalContainer::getPrimeIterator()
-    {
-        return this->primeIterator;
-    }
-
-    MagicalContainer::AscendingIterator::AscendingIterator() {}
+    // MagicalContainer::AscendingIterator::AscendingIterator() {}
 
     MagicalContainer::AscendingIterator::AscendingIterator(MagicalContainer &container)
-        : Iterator(), container(&container), sortedElements(container.elements)
+        : container(container), position(0)
     {
-        this->currElement = &sortedElements[0];
+        std::sort(container.elements.begin(), container.elements.end());
     }
 
     MagicalContainer::AscendingIterator::AscendingIterator(const AscendingIterator &other)
-        : container(other.container), sortedElements(other.sortedElements), currElement(other.currElement)
+        : container(other.container), position(other.position)
     {
     }
 
-    MagicalContainer::AscendingIterator::~AscendingIterator()
-    {
-    }
+    MagicalContainer::AscendingIterator::~AscendingIterator() {}
 
-    MagicalContainer::AscendingIterator &MagicalContainer::AscendingIterator::operator=(const AscendingIterator &other)
+    MagicalContainer::AscendingIterator &MagicalContainer::AscendingIterator::operator=(AscendingIterator &other)
     {
-        sortedElements = other.sortedElements;
-        container = other.container;
+        if (this->container != other.container)
+        {
+            throw std::runtime_error("Iterator assignment between different containers");
+        }
+        
+        this->container = other.container;
+        this->position = other.position;
         return *this;
     }
 
-    int &MagicalContainer::AscendingIterator::operator*()
+    int MagicalContainer::AscendingIterator::operator*()
     {
-        return *currElement;
+        return this->container.elements[position];
     }
 
     MagicalContainer::AscendingIterator &MagicalContainer::AscendingIterator::operator++()
     {
-        ++currElement;
+        if (this->position == this->end().position)
+        {
+            throw std::runtime_error("Iterator out of range");
+        }
+
+        ++this->position;
         return *this;
     }
 
     bool MagicalContainer::AscendingIterator::operator==(const AscendingIterator &other) const
     {
+        if (&this->container == &other.container && this->position == other.position)
+        {
+            return true;
+        }
         return false;
     }
 
     bool MagicalContainer::AscendingIterator::operator!=(const AscendingIterator &other) const
     {
-        return false;
+        return !(*this == other);
     }
 
     bool MagicalContainer::AscendingIterator::operator<(const AscendingIterator &other) const
     {
-        return false;
+        return this->position < other.position;
     }
 
     bool MagicalContainer::AscendingIterator::operator>(const AscendingIterator &other) const
     {
-        return false;
+        return this->position > other.position;
     }
 
-    std::vector<int>::iterator MagicalContainer::AscendingIterator::begin()
+    MagicalContainer::AscendingIterator MagicalContainer::AscendingIterator::begin()
     {
-        return this->sortedElements.begin();
+        AscendingIterator iter(this->container);
+        iter.position = 0;
+        return iter;
     }
 
-    std::vector<int>::iterator MagicalContainer::AscendingIterator::end()
+    MagicalContainer::AscendingIterator MagicalContainer::AscendingIterator::end()
     {
-        return this->sortedElements.end();
+        AscendingIterator iter(this->container);
+        iter.position = this->container.size();
+        return iter;
     }
 
-    MagicalContainer::AscendingIterator &MagicalContainer::AscendingIterator::operator=(AscendingIterator &&other) noexcept {return *this;}
-
-    MagicalContainer::SideCrossIterator::SideCrossIterator()
+    MagicalContainer::SideCrossIterator::SideCrossIterator(MagicalContainer &container) : container(container), position(0)
     {
+        this->container.elements = sortForSideCrossIterator(this->container);
     }
 
-    MagicalContainer::SideCrossIterator::SideCrossIterator(MagicalContainer &container)
-    {
-    }
-
-    MagicalContainer::SideCrossIterator::SideCrossIterator(const SideCrossIterator &other)
-    {
-    }
-
-    MagicalContainer::SideCrossIterator::~SideCrossIterator()
+    MagicalContainer::SideCrossIterator::SideCrossIterator(const SideCrossIterator &other) : container(other.container), position(other.position)
     {
     }
 
-    MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator=(const SideCrossIterator &other)
+    MagicalContainer::SideCrossIterator::~SideCrossIterator() {}
+
+    MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator=(SideCrossIterator &other)
     {
+        if (this->container != other.container)
+        {
+            throw std::runtime_error("Iterator assignment between different containers");
+        }
+
+        this->container = other.container;
+        this->position = other.position;
         return *this;
     }
 
-    int &MagicalContainer::SideCrossIterator::operator*()
+    int MagicalContainer::SideCrossIterator::operator*()
     {
-        return *currElement;
+        return this->container.elements[position];
     }
 
     MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator++()
     {
+        if (this->position == this->end().position)
+        {
+            throw std::runtime_error("Iterator out of range");
+        }
+
+        ++this->position;
         return *this;
     }
 
     bool MagicalContainer::SideCrossIterator::operator==(const SideCrossIterator &other) const
     {
+        if (&this->container == &other.container && this->position == other.position)
+        {
+            return true;
+        }
         return false;
     }
 
     bool MagicalContainer::SideCrossIterator::operator!=(const SideCrossIterator &other) const
     {
-        return false;
+        return !(*this == other);
     }
 
     bool MagicalContainer::SideCrossIterator::operator<(const SideCrossIterator &other) const
     {
-        return false;
+        return this->position < other.position;
     }
 
     bool MagicalContainer::SideCrossIterator::operator>(const SideCrossIterator &other) const
     {
-        return false;
+        return this->position > other.position;
     }
 
-    std::vector<int>::iterator MagicalContainer::SideCrossIterator::begin()
+    MagicalContainer::SideCrossIterator MagicalContainer::SideCrossIterator::begin()
     {
-        return this->sortedElements.begin();
+        SideCrossIterator iter(this->container);
+        iter.position = 0;
+        return iter;
     }
 
-    std::vector<int>::iterator MagicalContainer::SideCrossIterator::end()
+    MagicalContainer::SideCrossIterator MagicalContainer::SideCrossIterator::end()
     {
-        return this->sortedElements.end();
+        SideCrossIterator iter(this->container);
+        iter.position = this->container.size();
+        return iter;
     }
 
-    MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator=(SideCrossIterator &&other) noexcept {return *this;}
-
-
-    MagicalContainer::PrimeIterator::PrimeIterator()
+    MagicalContainer::PrimeIterator::PrimeIterator(MagicalContainer &container) : container(container), position(0) 
     {
+        this->container.elements = findPrimes(this->container.elements);
     }
 
-    MagicalContainer::PrimeIterator::PrimeIterator(MagicalContainer &container)
-    {
-    }
+    MagicalContainer::PrimeIterator::PrimeIterator(const PrimeIterator &other) : container(other.container), position(other.position) {}
 
-    MagicalContainer::PrimeIterator::PrimeIterator(const PrimeIterator &other)
-    {
-    }
+    MagicalContainer::PrimeIterator::~PrimeIterator() {}
 
-    MagicalContainer::PrimeIterator::~PrimeIterator()
+    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator=(PrimeIterator &other)
     {
-    }
+        if (this->container != other.container)
+        {
+            throw std::runtime_error("Iterator assignment between different containers");
+        } 
 
-    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator=(const PrimeIterator &other)
-    {
+        this->container = other.container;
+        this->position = other.position;
         return *this;
     }
 
-    int &MagicalContainer::PrimeIterator::operator*()
+    int MagicalContainer::PrimeIterator::operator*()
     {
-        return *currElement;
+        return this->container.elements[position];
     }
 
     MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()
     {
+        if (this->position == this->end().position)
+        {
+            throw std::runtime_error("Iterator out of range");
+        }
+
+        ++this->position;
         return *this;
     }
 
     bool MagicalContainer::PrimeIterator::operator==(const PrimeIterator &other) const
     {
+        if (&this->container == &other.container && this->position == other.position)
+        {
+            return true;
+        }
         return false;
     }
 
     bool MagicalContainer::PrimeIterator::operator!=(const PrimeIterator &other) const
     {
-        return false;
+        return !(*this == other);
     }
 
     bool MagicalContainer::PrimeIterator::operator<(const PrimeIterator &other) const
     {
-        return false;
+        return this->position < other.position;
     }
 
     bool MagicalContainer::PrimeIterator::operator>(const PrimeIterator &other) const
     {
-        return false;
+        return this->position > other.position;
     }
 
-    std::vector<int>::iterator MagicalContainer::PrimeIterator::begin()
+    MagicalContainer::PrimeIterator MagicalContainer::PrimeIterator::begin()
     {
-        return this->primeElements.begin();
+        PrimeIterator iter(this->container);
+        iter.position = 0;
+        return iter;
     }
 
-    std::vector<int>::iterator MagicalContainer::PrimeIterator::end()
+    MagicalContainer::PrimeIterator MagicalContainer::PrimeIterator::end()
     {
-        return this->primeElements.end();
+        PrimeIterator iter(this->container);
+        iter.position = this->container.size();
+        return iter;
     }
-
-    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator=(PrimeIterator &&other) noexcept {return *this;}
-
-
-    
 }
