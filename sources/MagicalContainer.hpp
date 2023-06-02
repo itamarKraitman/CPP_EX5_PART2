@@ -11,22 +11,50 @@ namespace ariel
 
     class MagicalContainer
     {
-        // class Iterator
-        // {
-        // public:
-        //     int *currElement;
-        //     Iterator();
-        //     virtual ~Iterator() = default;
-        //     virtual int operator*() = 0;
-        //     virtual Iterator &operator++() = 0;
+        // at first, I implemented basic class named 'Iterator', but according tests, there is no need for one
+    private:
+        vector<int> elements;
+        vector<int> primeElements;
 
-        //     Iterator(const Iterator &other) = delete;
-        //     Iterator &operator=(const Iterator &other) = delete;
-        //     Iterator(Iterator &&other) noexcept = delete;
-        //     Iterator &operator=(Iterator &&other) noexcept;
-        // };
+        static bool isPrime(int num)
+        {
+
+            if (num == 1)
+            {
+                return false;
+            }
+
+            if (num == 2)
+            {
+                return true;
+            }
+
+            double sqrtNum = sqrt(num);
+            for (int i = 2; i <= sqrtNum; i++)
+            {
+                if (num % i == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
     public:
+        MagicalContainer();
+        ~MagicalContainer();
+        bool addElement(int element);
+        void removeElement(int element);
+        std::vector<int> getElements() const;
+        size_t size() const;
+        bool operator==(MagicalContainer &other);
+        bool operator!=(MagicalContainer &other);
+
+        MagicalContainer(const MagicalContainer &other) = delete;
+        MagicalContainer &operator=(const MagicalContainer &other) = default;
+        MagicalContainer(MagicalContainer &&other) noexcept = delete;
+        MagicalContainer &operator=(MagicalContainer &&other) noexcept = delete;
+
         class AscendingIterator
         {
         private:
@@ -38,7 +66,7 @@ namespace ariel
             AscendingIterator(const AscendingIterator &other);
             ~AscendingIterator();
 
-            AscendingIterator &operator=(AscendingIterator &other);
+            AscendingIterator &operator=(const AscendingIterator &other);
             bool operator==(const AscendingIterator &other) const;
             bool operator!=(const AscendingIterator &other) const;
             bool operator<(const AscendingIterator &other) const;
@@ -91,7 +119,7 @@ namespace ariel
             SideCrossIterator(const SideCrossIterator &other);
             ~SideCrossIterator();
 
-            SideCrossIterator &operator=(SideCrossIterator &other);
+            SideCrossIterator &operator=(const SideCrossIterator &other);
             bool operator==(const SideCrossIterator &other) const;
             bool operator!=(const SideCrossIterator &other) const;
             bool operator<(const SideCrossIterator &other) const;
@@ -112,25 +140,12 @@ namespace ariel
             MagicalContainer &container;
             size_t position;
 
-            static std::vector<int> findPrimes(std::vector<int> vec)
-            {
-                std::vector<int> onlyPrimes;
-                for (size_t i = 0; i < vec.size(); i++)
-                {
-                    if (isPrime(vec[i]))
-                    {
-                        onlyPrimes.push_back(vec[i]);
-                    }
-                }
-                return onlyPrimes;
-            }
-
         public:
             PrimeIterator(MagicalContainer &container);
             PrimeIterator(const PrimeIterator &other);
             ~PrimeIterator();
 
-            PrimeIterator &operator=(PrimeIterator &other);
+            PrimeIterator &operator=(const PrimeIterator &other);
             bool operator==(const PrimeIterator &other) const;
             bool operator!=(const PrimeIterator &other) const;
             bool operator<(const PrimeIterator &other) const;
@@ -144,48 +159,6 @@ namespace ariel
             PrimeIterator(PrimeIterator &&other) noexcept = default;
             PrimeIterator &operator=(PrimeIterator &&other) noexcept = delete;
         };
-
-        vector<int> elements;
-        vector<int> primeElements;
-
-        MagicalContainer();
-        ~MagicalContainer();
-        bool addElement(int element);
-        void removeElement(int element);
-        std::vector<int> getElements() const;
-        size_t size() const;
-        bool operator==(MagicalContainer &other);
-        bool operator!=(MagicalContainer &other);
-
-        MagicalContainer(const MagicalContainer &other) = delete;
-        MagicalContainer &operator=(MagicalContainer &other) = default;
-        MagicalContainer(MagicalContainer &&other) noexcept = delete;
-        MagicalContainer &operator=(MagicalContainer &&other) noexcept = delete;
-
-    private:
-        static bool isPrime(int num)
-        {
-
-            if (num == 1)
-            {
-                return false;
-            }
-
-            if (num == 2)
-            {
-                return true;
-            }
-
-            double sqrtNum = sqrt(num);
-            for (int i = 2; i <= sqrtNum; i++)
-            {
-                if (num % i == 0)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
     };
 }
 #endif

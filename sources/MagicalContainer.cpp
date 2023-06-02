@@ -61,8 +61,6 @@ namespace ariel
         return (this->elements != other.elements);
     }
 
-    // MagicalContainer::AscendingIterator::AscendingIterator() {}
-
     MagicalContainer::AscendingIterator::AscendingIterator(MagicalContainer &container)
         : container(container), position(0)
     {
@@ -76,7 +74,7 @@ namespace ariel
 
     MagicalContainer::AscendingIterator::~AscendingIterator() {}
 
-    MagicalContainer::AscendingIterator &MagicalContainer::AscendingIterator::operator=(AscendingIterator &other)
+    MagicalContainer::AscendingIterator &MagicalContainer::AscendingIterator::operator=(const AscendingIterator &other)
     {
         if (this->container != other.container)
         {
@@ -153,7 +151,7 @@ namespace ariel
 
     MagicalContainer::SideCrossIterator::~SideCrossIterator() {}
 
-    MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator=(SideCrossIterator &other)
+    MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator=(const SideCrossIterator &other)
     {
         if (this->container != other.container)
         {
@@ -228,7 +226,7 @@ namespace ariel
 
     MagicalContainer::PrimeIterator::~PrimeIterator() {}
 
-    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator=(PrimeIterator &other)
+    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator=(const PrimeIterator &other)
     {
         if (this->container != other.container)
         {
