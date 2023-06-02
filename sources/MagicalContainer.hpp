@@ -112,31 +112,6 @@ namespace ariel
             MagicalContainer &container;
             size_t position;
 
-            static bool isPrime(int num)
-            {
-
-                if (num == 1)
-                {
-                    return false;
-                }
-
-                if (num == 2)
-                {
-                    return true;
-                }
-                
-
-                double sqrtNum = sqrt(num);
-                for (int i = 2; i <= sqrtNum; i++)
-                {
-                    if (num % i == 0)
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
             static std::vector<int> findPrimes(std::vector<int> vec)
             {
                 std::vector<int> onlyPrimes;
@@ -171,6 +146,7 @@ namespace ariel
         };
 
         vector<int> elements;
+        vector<int> primeElements;
 
         MagicalContainer();
         ~MagicalContainer();
@@ -185,6 +161,31 @@ namespace ariel
         MagicalContainer &operator=(MagicalContainer &other) = default;
         MagicalContainer(MagicalContainer &&other) noexcept = delete;
         MagicalContainer &operator=(MagicalContainer &&other) noexcept = delete;
+
+    private:
+        static bool isPrime(int num)
+        {
+
+            if (num == 1)
+            {
+                return false;
+            }
+
+            if (num == 2)
+            {
+                return true;
+            }
+
+            double sqrtNum = sqrt(num);
+            for (int i = 2; i <= sqrtNum; i++)
+            {
+                if (num % i == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     };
 }
 #endif

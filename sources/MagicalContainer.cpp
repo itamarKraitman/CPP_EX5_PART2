@@ -18,6 +18,11 @@ namespace ariel
             }
         }
 
+        if (isPrime(newElement))
+        {
+            primeElements.push_back(newElement);
+        }
+        
         elements.push_back(newElement);
         return true;
     }
@@ -216,7 +221,7 @@ namespace ariel
 
     MagicalContainer::PrimeIterator::PrimeIterator(MagicalContainer &container) : container(container), position(0)
     {
-        // this->container.elements = findPrimes(this->container.elements);
+        // position of this iterator is for prime elements only!
     }
 
     MagicalContainer::PrimeIterator::PrimeIterator(const PrimeIterator &other) : container(other.container), position(other.position) {}
@@ -235,45 +240,19 @@ namespace ariel
         return *this;
     }
 
-    // int MagicalContainer::PrimeIterator::operator*()
-    // {
-    //     return this->container.elements[position];
-    // }
-
-    // MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()
-    // {
-    //     if (this->position == this->end().position)
-    //     {
-    //         throw std::runtime_error("Iterator out of range");
-    //     }
-
-    //     ++this->position;
-    //     return *this;
-    // }
-
     int MagicalContainer::PrimeIterator::operator*()
     {
-        while (!isPrime(this->container.elements[this->position]))
-        {
-            ++this->position;
-        }
+        return this->container.primeElements[position];
+    }
 
+    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()
+    {
         if (this->position == this->end().position)
         {
             throw std::runtime_error("Iterator out of range");
         }
 
-        return this->container.elements[this->position];
-    }
-
-    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()
-    {
         ++this->position;
-        while (this->position != this->end().position && !isPrime(this->container.elements[this->position]))
-        {
-            ++this->position;
-        }
-
         return *this;
     }
 
@@ -311,7 +290,7 @@ namespace ariel
     MagicalContainer::PrimeIterator MagicalContainer::PrimeIterator::end()
     {
         PrimeIterator iter(this->container);
-        iter.position = this->container.size();
+        iter.position = this->container.primeElements.size();
         return iter;
     }
 }
