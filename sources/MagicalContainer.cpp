@@ -18,22 +18,18 @@ namespace ariel
             }
         }
 
-        // elements.push_back(newElement);
-
-        // std::sort(elements.begin(), elements.end(), [](int a, int b)
-        //           { return a < b; });
-
+        // finding the correct place to store the new element in ascending order in O(n)
         auto it = std::lower_bound(elements.begin(), elements.end(), newElement);
         elements.insert(it, newElement);
-
-        size_t start = 0;
-        size_t end = elements.size() - 1;
 
         this->asceindingElements.clear();
         this->sideCrossElements.clear();
         this->primeElements.clear();
 
-        for (size_t i = 0; i < elements.size(); i++)
+        size_t start = 0;
+        size_t end = elements.size() - 1;
+
+        for (size_t i = 0; i < elements.size(); i++) // iterating over elements in O(n) and inserting each element to the right pvector and position
         {
             this->asceindingElements.push_back(&elements[i]); // add to ascending order vector
 
@@ -48,7 +44,7 @@ namespace ariel
                 end--;
             }
 
-            // add to primes
+            // add to primes (isPrime is in O(n))
             if (isPrime(elements[i]))
             {
                 this->primeElements.push_back(&elements[i]);
