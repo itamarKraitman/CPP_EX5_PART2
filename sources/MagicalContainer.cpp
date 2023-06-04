@@ -18,10 +18,13 @@ namespace ariel
             }
         }
 
-        elements.push_back(newElement);
+        // elements.push_back(newElement);
 
-        std::sort(elements.begin(), elements.end(), [](int a, int b)
-                  { return a < b; });
+        // std::sort(elements.begin(), elements.end(), [](int a, int b)
+        //           { return a < b; });
+
+        auto it = std::lower_bound(elements.begin(), elements.end(), newElement);
+        elements.insert(it, newElement);
 
         size_t start = 0;
         size_t end = elements.size() - 1;
@@ -32,7 +35,7 @@ namespace ariel
 
         for (size_t i = 0; i < elements.size(); i++)
         {
-            this->asceindingElements.push_back(&elements[i]); // add to ascending order vector 
+            this->asceindingElements.push_back(&elements[i]); // add to ascending order vector
 
             if (i % 2 == 0) // add to sideCross
             {
