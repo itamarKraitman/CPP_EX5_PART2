@@ -13,17 +13,45 @@ namespace ariel
         {
             if (newElement == currElement)
             {
-                cout << "Element already exist" << endl;
+                cout << "Element already exists" << endl;
                 return false;
             }
         }
 
-        if (isPrime(newElement))
-        {
-            primeElements.push_back(newElement);
-        }
-        
         elements.push_back(newElement);
+
+        std::sort(elements.begin(), elements.end(), [](int a, int b)
+                  { return a < b; });
+
+        size_t start = 0;
+        size_t end = elements.size() - 1;
+
+        this->asceindingElements.clear();
+        this->sideCrossElements.clear();
+        this->primeElements.clear();
+
+        for (size_t i = 0; i < elements.size(); i++)
+        {
+            this->asceindingElements.push_back(&elements[i]); // add to ascending order vector 
+
+            if (i % 2 == 0) // add to sideCross
+            {
+                sideCrossElements.push_back(&elements[start]); // Take element from the beginning
+                start++;
+            }
+            else
+            {
+                sideCrossElements.push_back(&elements[end]); // Take element from the end
+                end--;
+            }
+
+            // add to primes
+            if (isPrime(elements[i]))
+            {
+                this->primeElements.push_back(&elements[i]);
+            }
+        }
+
         return true;
     }
 
@@ -64,7 +92,6 @@ namespace ariel
     MagicalContainer::AscendingIterator::AscendingIterator(MagicalContainer &container)
         : container(container), position(0)
     {
-        std::sort(container.elements.begin(), container.elements.end());
     }
 
     MagicalContainer::AscendingIterator::AscendingIterator(const AscendingIterator &other)
@@ -88,7 +115,7 @@ namespace ariel
 
     int MagicalContainer::AscendingIterator::operator*()
     {
-        return this->container.elements[position];
+        return *(this->container.asceindingElements[position]);
     }
 
     MagicalContainer::AscendingIterator &MagicalContainer::AscendingIterator::operator++()
@@ -142,7 +169,6 @@ namespace ariel
 
     MagicalContainer::SideCrossIterator::SideCrossIterator(MagicalContainer &container) : container(container), position(0)
     {
-        this->container.elements = sortForSideCrossIterator(this->container);
     }
 
     MagicalContainer::SideCrossIterator::SideCrossIterator(const SideCrossIterator &other) : container(other.container), position(other.position)
@@ -165,7 +191,7 @@ namespace ariel
 
     int MagicalContainer::SideCrossIterator::operator*()
     {
-        return this->container.elements[position];
+        return *(this->container.sideCrossElements[position]);
     }
 
     MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator++()
@@ -174,7 +200,6 @@ namespace ariel
         {
             throw std::runtime_error("Iterator out of range");
         }
-
         ++this->position;
         return *this;
     }
@@ -240,7 +265,7 @@ namespace ariel
 
     int MagicalContainer::PrimeIterator::operator*()
     {
-        return this->container.primeElements[position];
+        return *(this->container.primeElements[this->position]);
     }
 
     MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()

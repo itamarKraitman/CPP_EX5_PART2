@@ -14,7 +14,36 @@ namespace ariel
         // at first, I implemented basic class named 'Iterator', but according tests, there is no need for one
     private:
         vector<int> elements;
-        vector<int> primeElements;
+        vector<const int *> asceindingElements;
+        vector<const int *> sideCrossElements;
+        vector<const int *> primeElements;
+
+        static std::vector<const int *> sortForSideCrossIterator(vector<int> containerElements)
+        {
+            // vector<int> containerElements = container.elements;
+            std::sort(containerElements.begin(), containerElements.end()); // Sort the vector in ascending order
+
+            size_t start = 0;
+            size_t end = containerElements.size() - 1;
+
+            std::vector<const int *> sortedVec(containerElements.size());
+
+            for (size_t i = 0; i < containerElements.size(); i++)
+            {
+                if (i % 2 == 0)
+                {
+                    sortedVec[i] = &containerElements[start]; // Take element from the beginning
+                    start++;
+                }
+                else
+                {
+                    sortedVec[i] = &containerElements[end]; // Take element from the end
+                    end--;
+                }
+            }
+
+            return sortedVec;
+        }
 
         static bool isPrime(int num)
         {
@@ -86,33 +115,6 @@ namespace ariel
         private:
             MagicalContainer &container;
             size_t position;
-
-            static std::vector<int> sortForSideCrossIterator(MagicalContainer &container)
-            {
-                vector<int> containerElements = container.elements;
-                std::sort(containerElements.begin(), containerElements.end()); // Sort the vector in ascending order
-
-                size_t start = 0;
-                size_t end = containerElements.size() - 1;
-
-                std::vector<int> sortedVec(containerElements.size());
-
-                for (size_t i = 0; i < containerElements.size(); i++)
-                {
-                    if (i % 2 == 0)
-                    {
-                        sortedVec[i] = containerElements[start]; // Take element from the beginning
-                        start++;
-                    }
-                    else
-                    {
-                        sortedVec[i] = containerElements[end]; // Take element from the end
-                        end--;
-                    }
-                }
-
-                return sortedVec;
-            }
 
         public:
             SideCrossIterator(MagicalContainer &container);
