@@ -23,7 +23,9 @@ namespace ariel
         elements.insert(it, newElement);
 
         this->asceindingElements.clear();
+        this->asceindingElements.reserve(this->elements.size());
         this->sideCrossElements.clear();
+        this->sideCrossElements.reserve(this->elements.size());
         this->primeElements.clear();
 
         size_t start = 0;
@@ -44,7 +46,7 @@ namespace ariel
                 end--;
             }
 
-            // add to primes (isPrime is in O(n))
+            // add to primes (isPrime is in O(sqrt(n)))
             if (isPrime(elements[i]))
             {
                 this->primeElements.push_back(&elements[i]);
