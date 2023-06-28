@@ -67,6 +67,37 @@ namespace ariel
             }
         }
 
+        this->asceindingElements.erase(std::find(this->asceindingElements.begin(), this->asceindingElements.end(), &element));
+
+        this->sideCrossElements.erase(std::find(this->sideCrossElements.begin(), this->sideCrossElements.end(), &element));
+
+        if (this->elements.size() > 1)
+        {
+            // rearreange the sideCross order
+            size_t start = 0;
+            size_t end = elements.size() - 1;
+
+            for (size_t i = 0; i < elements.size(); i++) // iterating over elements in O(n) and inserting each element to the right pvector and position
+            {
+
+                if (i % 2 == 0) // add to sideCross
+                {
+                    sideCrossElements.push_back(&elements[start]); // Take element from the beginning
+                    start++;
+                }
+                else
+                {
+                    sideCrossElements.push_back(&elements[end]); // Take element from the end
+                    end--;
+                }
+            }
+        }
+
+        if (isPrime(element))
+        {
+            this->primeElements.erase(std::find(this->primeElements.begin(), this->primeElements.end(), &element));
+        }
+
         throw std::runtime_error("Element does not exist");
     }
 
@@ -141,11 +172,17 @@ namespace ariel
 
     bool MagicalContainer::AscendingIterator::operator!=(const AscendingIterator &other) const
     {
+        if (dynamic_cast<const AscendingIterator *>(&other) == nullptr)
+        {
+            throw runtime_error("Iterators are not of the same type");
+        }
+
         return !(*this == other);
     }
 
     bool MagicalContainer::AscendingIterator::operator<(const AscendingIterator &other) const
     {
+
         return this->position < other.position;
     }
 

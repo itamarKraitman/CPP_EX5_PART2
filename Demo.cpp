@@ -42,5 +42,15 @@ int main() {
     container.removeElement(9);
     std::cout << "Size of container after removing an element: " << container.size() << std::endl;
 
+    try
+    {
+        // Try to remove an element that is not in the container
+        container.removeElement(100);
+    }
+    catch(const std::exception& e)
+    {
+        cout << "Exeption caught as expected: " << e.what() << endl;
+    }
+
     return 0;
 }
